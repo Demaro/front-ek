@@ -9,8 +9,6 @@ import { AuthSaveComponent2 } from './auth-save/auth-save2.component';
 import { PanelComponent } from '././panel/panel.component';
 import { DashboardComponent } from '../app/dashboard/dashboard.component';
 
-
-
 const appRoutes: Routes = [
    { path: '', component: HomeComponent,  },
    { path: 'login', component: LoginComponent },
@@ -18,9 +16,6 @@ const appRoutes: Routes = [
    { path: 'contact', component: ContactComponent},
    { path: 'panel', component: PanelComponent, canActivate: [AuthSaveComponent]},
    { path: 'dashboard', component: DashboardComponent,  canActivate: [AuthSaveComponent]},
-
-
-
 
    // otherwise redirect to home
    { path: '**', redirectTo: '' }

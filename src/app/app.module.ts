@@ -34,8 +34,8 @@ import { environment } from '../environments/environment';
 import { AuthSaveComponent2 } from './auth-save/auth-save2.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSelectModule } from '@angular/material/select';
-
-
+import { MatNativeDateModule} from '@angular/material';
+import { MatDatepickerModule} from '@angular/material/datepicker';
 import { SnackbarComponent } from './snackbar/snackbar.component';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFirestoreModule } from 'angularfire2/firestore';
@@ -44,7 +44,8 @@ import { StepperComponent } from './stepper/stepper.component';
 import { PanelComponent } from './panel/panel.component';
 import { CurrencyMaskModule } from "ng2-currency-mask";
 import { DashboardComponent } from './dashboard/dashboard.component';
-
+import {MAT_DATE_LOCALE} from '@angular/material';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 
 @NgModule({
@@ -80,11 +81,15 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     MatInputModule,
     MatTableModule,
     MatTooltipModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     MDBBootstrapModule.forRoot(),
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AngularFireAuthModule,
-    CurrencyMaskModule
+    CurrencyMaskModule,
+    ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
+    
     
     
   ],
@@ -103,9 +108,13 @@ import { DashboardComponent } from './dashboard/dashboard.component';
       multi: true
   },
 
+  { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
+
   User,
   SnackbarComponent,
   HttpModule,
+
+
 
   //fakeBackendProvider,
     

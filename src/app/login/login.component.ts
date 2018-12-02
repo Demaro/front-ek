@@ -199,21 +199,8 @@ export class LoginComponent implements OnInit {
                             
                             //console.log(this.authenticationService.authenticated)
 
-                            this.planServices.ListGasto()
-                            .pipe(first())
-                            .subscribe(data => {
-                              console.log("data api edit2 gastos stepper: ", data)
-                              this.planServices.arrayinputinitial = data;
-                      
-                              let v = this.planServices.arrayinputinitial.filter(gastos => gastos.if_default == true)
 
-              
-                      
-                              this.planServices.arrayinputdefault = v;
-
-
-                          })
-                            
+                            this.zone.run(() => this.router.navigate(['panel']));
 
                             this.authenticationService.contactsend(
                                 this.authenticationService.userDataGoogle.displayName, 
@@ -229,7 +216,7 @@ export class LoginComponent implements OnInit {
                                   data => {
                                     this.loading = false;
                                     
-                                    this.zone.run(() => this.router.navigate(['panel']));
+                                    
         
                                     this.authenticationService.authenticated = true;
                       

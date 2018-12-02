@@ -31,7 +31,10 @@ export class PlanMensualService {
   salary_less_total_gasto4: any = 0
   salary_less_total_gasto5: any = 0;
   salary_less_total_gasto6: any = 0;
-  
+
+  total_gasto: any = 0;
+  total_disponible: any = 0;
+
   percent_55: any = 0;
   card_Actual: number = null;
   
@@ -43,10 +46,12 @@ export class PlanMensualService {
   
 
   arrayinputuser: any = [
+
+    
    
           ]
         
-    arrayinput: any = []
+    arrayinput: any = [ ]
     arrayinputinitial: any = []
     arrayinputdefault: any = []
     myChart: any;

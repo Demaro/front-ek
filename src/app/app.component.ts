@@ -19,7 +19,7 @@ export class AppComponent implements OnInit {
   username_get = "";
   showStyle: false;
 
-  version = "0.4.1";
+  version = "0.5.1";
 
   
 

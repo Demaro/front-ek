@@ -88,6 +88,7 @@ export class StepperComponent implements OnInit {
   EditRowID: any = '';
   newItem: any;
   classEditActive: boolean = false;
+  loading: boolean = false;
 
   arrayinitial = [
 
@@ -106,72 +107,97 @@ export class StepperComponent implements OnInit {
 
   }
 
+
+  
+
   @ViewChild("salary") nameField: ElementRef;
   ngOnInit() {
 
-    this.nameField.nativeElement.focus();
+    
 
     if (this.auth.if_register) {
 
-
-
-
-
       this.planServices.card1 = true;
 
+      this.nameField.nativeElement.focus();
 
-
-      for (let item of this.planServices.arrayinputdefault) { 
-
-        console.log("for add defauls in plan")
-        this.planServices.AddGasto(item.name, item.value, 1).subscribe(objs => {
-          console.log("objs post: ", objs)
-          this.planServices.arrayinput.push(objs);
-
-          console.log("post push defaults: ", this.planServices.arrayinput)
-
-          
-        })
-    }
+      this.loading = true;
 
       this.planServices.ListGasto()
       .pipe(first())
       .subscribe(data => {
-        console.log("data api edit2 gastos stepper: ", data)
+        this.planServices.arrayinputinitial = data;
 
-        console.log("array input stepper: ", this.planServices.arrayinput);
+        let v = this.planServices.arrayinputinitial.filter(gastos => gastos.if_default == true)
 
-        this.auth.if_register = false;
+        this.planServices.arrayinputdefault = v;
 
-        this.patch()
-
-        this.planServices.arraygastosApi = this.planServices.arrayinput;
+      for (let item of this.planServices.arrayinputdefault) { 
+      
+          this.planServices.AddGasto(item.name, item.value, 1).subscribe(objs => {
         
-         console.log("array gastos API:", this.planServices.arraygastosApi)
+          this.arrayinitial.push(objs)
+      
 
-        var officersIds = this.planServices.arrayinput.map(function (items) {
-          return items.id
-        });
-
-
-        console.log("officersIds :",officersIds)
+          })
         
-                this.planServices.UpdateGastos(officersIds)
-                .pipe(first()).subscribe(data => {
-                  console.log("to put for api:", data)
-                  this.planServices.obj_save = data
-
-
-                }, error => {
-                  console.log(error)
-                }
-                ) 
-
+        
+             
+            }
     })
+
+
+    setTimeout(() => {
+
+      console.log("arrayinput  init post push: ", this.arrayinitial)
+      
+          var officersIds = this.arrayinitial.map(function (items) {
+            return items.id
+          });
+      
+          console.log("officersIds :",officersIds)
+          
+                  this.planServices.UpdateGastos(officersIds)
+                  .pipe(first()).subscribe(data => {
+                    console.log("to put for api:", data)
+                    const obj_save = data;
+                  }, error => {
+                    console.log(error)
+                  }
+                  ) 
+      
+      
+            this.auth.if_register = false;
+                  
+            console.log("arrayinput init post push: ", this.arrayinitial)
+                  
+            this.planServices.arrayinput = this.arrayinitial
+      
+      
+      
+            console.log("arrayinput post push: ", this.planServices.arrayinput)
+  
+            this.loading = false;
+      
+            this.patch()
+
+            
+
+    }, 1000 )
+    
+    
       
     }
 
+
+  
+  //Initial Else
+
+
     else {
+
+      this.loading = true;
+
       this.planServices.UserAuthPlan()
       .subscribe(res => {
 
@@ -189,6 +215,8 @@ export class StepperComponent implements OnInit {
 
         this.planServices.sueldo = sueldo_api;
 
+        this.loading = false;
+
         if (this.planServices.card6) {
 
                     
@@ -203,6 +231,8 @@ export class StepperComponent implements OnInit {
                     
                       console.log("card 2 donaciones  true", this.planServices.arrayinput)
 
+
+                     
                       this.patch()
           
                   }
@@ -329,11 +359,14 @@ export class StepperComponent implements OnInit {
   
   }
 
+
   goDashboard() {
 
     
     this.next()
     if (this.firstFormGroup.invalid) {
+
+      this.nameField.nativeElement.focus();
 
       console.log("edit status: ", this.editactivate)
       return  
@@ -359,6 +392,8 @@ export class StepperComponent implements OnInit {
     
     this.next()
         if (this.firstFormGroup.invalid) {
+
+          this.nameField.nativeElement.focus();
           
           return;
       } else{

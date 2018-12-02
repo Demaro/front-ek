@@ -21,7 +21,6 @@ export class DashboardComponent implements OnInit {
             public snackBar: MatSnackBar,
             private zone: NgZone, ) { }
 
-
   canvas: any;
   myChart:any;
 
@@ -31,14 +30,23 @@ export class DashboardComponent implements OnInit {
   educ: any = [];
   fina: any = [];
   dona; any = [];
+  suma_total_gastos: any;
+  suma_total_disponible: any;
+
+  gastos1: any = 0;
+  gastos2: any = 0;
+  gastos3: any = 0;
+  gastos4: any = 0;
+  gastos5: any = 0;
+  gastos6: any = 0;
 
 
   ngOnInit() {
 
-
     setTimeout (() => { 
       this.auth.colornav = true;
   }); 
+
 
     window.scrollTo(0, 0);
 
@@ -57,10 +65,7 @@ export class DashboardComponent implements OnInit {
 
       let sueldo_api = this.planServices.plan_mensual.sueldo
 
-      this.planServices.sueldo = sueldo_api;
-
-
-
+        this.planServices.sueldo = sueldo_api;
 
         this.planServices.arrayinput = this.planServices.plan_mensual.gasto_general
 
@@ -81,12 +86,10 @@ export class DashboardComponent implements OnInit {
 
         console.log("card 1 gastos fijos true")
 
+        console.log("new arrayinput: ", this.planServices.arrayinput)
 
-      console.log("new arrayinput: ", this.planServices.arrayinput)
-
-      
-
-  this.planServices.percent_55 = (this.planServices.sueldo / 100)*55;
+    
+    this.planServices.percent_55 = (this.planServices.sueldo / 100)*55;
   
     console.log(" %55 del sueldo:", this.planServices.percent_55)
   
@@ -100,6 +103,10 @@ export class DashboardComponent implements OnInit {
     console.log(" 5% ahorro of salary: ", this.planServices.percent_5)
 
     this.total_reduce()
+
+    this.pieChartResume()
+    
+    this.BarChartResume()
 
     this.pieChart()
 
@@ -127,10 +134,7 @@ export class DashboardComponent implements OnInit {
 
 total_reduce() {
 
-
 //  General all Reduce
- 
-
   // Gastos Fijos
 
   console.log("arrai input: ", this.fijos)
@@ -162,8 +166,7 @@ total_reduce() {
     console.log("resta salario y total gastos :", this.planServices.salary_less_total_gasto2)
 
 
-
-  var result3 = this.ocio.map(a => a.value);
+    var result3 = this.ocio.map(a => a.value);
   
     let total3 = result3.reduce((a, b) => +a + +b, 0);
   
@@ -177,8 +180,7 @@ total_reduce() {
     console.log("resta salario y total gastos :", this.planServices.salary_less_total_gasto3)
 
 
-
-  var result4 = this.educ.map(a => a.value);
+    var result4 = this.educ.map(a => a.value);
   
     let total4 = result4.reduce((a, b) => +a + +b, 0);
   
@@ -193,7 +195,7 @@ total_reduce() {
 
 
 
-  var result5 = this.fina.map(a => a.value);
+    var result5 = this.fina.map(a => a.value);
   
     let total5= result5.reduce((a, b) => +a + +b, 0);
   
@@ -207,8 +209,7 @@ total_reduce() {
     console.log("resta salario y total gastos :", this.planServices.salary_less_total_gasto5)
 
     
-
-    var result6 = this.dona.map(a => a.value);
+      var result6 = this.dona.map(a => a.value);
     
       let total6= result6.reduce((a, b) => +a + +b, 0);
     
@@ -221,6 +222,11 @@ total_reduce() {
     
       console.log("resta salario y total gastos :", this.planServices.salary_less_total_gasto6)
 
+      this.suma_total_gastos = this.planServices.totalgastos1 + this.planServices.totalgastos2 + this.planServices.totalgastos3
+                                + this.planServices.totalgastos4 + this.planServices.totalgastos5 + this.planServices.totalgastos6
+
+      this.suma_total_disponible = this.planServices.salary_less_total_gasto + this.planServices.salary_less_total_gasto2 + this.planServices.salary_less_total_gasto3
+                                    + this.planServices.salary_less_total_gasto4 + this.planServices.salary_less_total_gasto5 + this.planServices.salary_less_total_gasto6
 }
 
 
@@ -256,8 +262,7 @@ ngAfterViewInit() {
       this.openSnackBar("Con poco dinero que donen muchas personas a la vez se cambia el mundo (o por lo menos el mundo de una persona) y, además, esa pequeña donación ayuda a mejorar de alguna manera el sistema en el que vivimos.", "cerrar");
     }
 
-    
-
+ 
   }
 
 
@@ -277,7 +282,6 @@ ngAfterViewInit() {
 
 adminCard(number){
   console.log(number)
-
 
   if (number == 1){
     
@@ -318,12 +322,7 @@ currencyMoney(value) {
 
   console.log(value)
 
-  
-  
 }
-
-
-
 
 
 pieChart() {
@@ -345,8 +344,6 @@ pieChart() {
 
   console.log("formated: ", x)
 
-  
-          
 
       let htmlRef = this.elementRef.nativeElement.querySelector(`#myChart`);
       this.myChart = new Chart(htmlRef, {
@@ -372,6 +369,126 @@ pieChart() {
     
     }
 
+    pieChartResume() {
+
+      console.log("piechart")
+      
+        const formatter = new Intl.NumberFormat('de-DE', {
+      
+          currency: 'USD',
+          minimumFractionDigits: 0
+        })
+      
+        let x = formatter.format(this.suma_total_gastos)
+      
+        let z = formatter.format(this.suma_total_disponible)
+      
+      
+      
+        this.planServices.total_gasto = x;
+
+        this.planServices.total_disponible = z;
+
+        
+
+            let htmlRef = this.elementRef.nativeElement.querySelector(`#pieChartResume`);
+            this.myChart = new Chart(htmlRef, {
+              type: 'doughnut',
+              data: {
+                  labels: ["Total Gastado", "Total Disponible",],
+                  datasets: [{
+                      label: '',
+                      data: [this.planServices.total_gasto ,  this.planServices.total_disponible],
+                      backgroundColor: [
+                          '#e0cade',
+                          '#7cd8a0'
+                      ],
+      
+                      borderWidth: 1
+                  }]
+              },
+              options: {
+                responsive: false,
+      
+            }
+            });
+          
+          }
+
+
+          BarChartResume() {
+            
+                  console.log("piechart")
+                  
+                    const formatter = new Intl.NumberFormat('de-DE', {
+                  
+                      currency: 'USD',
+                      minimumFractionDigits: 0
+                    })
+                  
+
+                    let x1 = formatter.format(this.planServices.totalgastos1)
+
+                    let x2 = formatter.format(this.planServices.totalgastos2)
+
+                    let x3 = formatter.format(this.planServices.totalgastos3)
+
+                    let x4 = formatter.format(this.planServices.totalgastos4)
+
+                    let x5 = formatter.format(this.planServices.totalgastos5)
+
+                    let x6 = formatter.format(this.planServices.totalgastos6)
+                  
+                    
+                    this.gastos1 = x1;
+                    this.gastos2 = x2;
+                    this.gastos3 = x3;
+                    this.gastos4 = x4;
+                    this.gastos5 = x5;
+                    this.gastos6 = x6;
+
+                    
+                            
+                  
+                        let htmlRef = this.elementRef.nativeElement.querySelector(`#BarChartResume`);
+                        this.myChart = new Chart(htmlRef, {
+                          type: 'bar',
+                          data: {
+                            labels: ["Gastos fijos", "Ahorro", "Ocio", "Educacion", "Finanzas", "Donaciones"],
+                            datasets: [{
+                              label: 'Total Gastado',
+                              data: [this.gastos1, this.gastos2, this.gastos3, this.gastos4, this.gastos5, this.gastos6,],
+                              backgroundColor: [
+                                '#5271C2',
+                                '#35a541',
+                                '#bdb235',
+                                '#db6623',
+                                '#3e5eb3',
+                                '#aa9e5c',                  
+                              ],
+
+                              borderWidth: 1
+                            }]
+                          },
+                          options: {
+                            responsive: false,
+                            scales: {
+                              xAxes: [{
+                                ticks: {
+                                  maxRotation: 90,
+                                  minRotation: 80
+                                }
+                              }],
+                              yAxes: [{
+                                ticks: {
+                                  beginAtZero: true
+                                }
+                              }]
+                            }
+                          }
+                        });
+                      
+                      }
 
     pieChart2() {
       
