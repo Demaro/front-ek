@@ -25,6 +25,7 @@ import {MatButtonModule,
   MatInputModule, 
   MatTableModule,
   MatTooltipModule} from '@angular/material';
+  
 
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { MDBBootstrapModule } from 'angular-bootstrap-md';
@@ -81,6 +82,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     MatInputModule,
     MatTableModule,
     MatTooltipModule,
+    MatCheckboxModule,
     MatDatepickerModule,
     MatNativeDateModule,
     MDBBootstrapModule.forRoot(),

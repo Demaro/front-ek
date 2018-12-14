@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
@@ -34,7 +34,8 @@ export class RegisterComponent implements OnInit {
         private userService: UserService,
         private auth: AuthenticationService,
         private snack: MatSnackBar,
-        public planServices: PlanMensualService
+        public planServices: PlanMensualService,
+        private zone:NgZone
    ) { }
  
     ngOnInit() {
@@ -72,61 +73,50 @@ export class RegisterComponent implements OnInit {
                 data => {
                     
 
+                    
+                    this.auth.if_register = true;
+                    
                     this.auth.login(this.registerForm.value.email, this.registerForm.value.password)
-                    .subscribe(
+                    .pipe(first())
+                    .subscribe(datalogin => {
 
-                        data2 =>{
+                        this.auth.userCurrent = datalogin;
+                        
+                        //this.authenticationService.username_get = this.authenticationService.userCurrent.name
+                        
+                        this.auth.userCurrent = JSON.parse(localStorage.getItem('currentUser'));
 
-                            this.auth.userCurrent = JSON.parse(localStorage.getItem('currentUser'));
-                            //console.log(this.auth.userCurrent)
-                            this.auth.authenticated = true;
+                        this.auth.username_get = this.auth.userCurrent.name
+                    
+                        
+                        //console.log(this.authenticationService.authenticated)
 
-                            this.auth.username_get = this.auth.userCurrent.name
+
+                        this.zone.run(() => this.router.navigate(['panel']));
+
+                        this.auth.contactsend(
+                            this.registerForm.value.first_name, 
+                            this.registerForm.value.email,
+                            0, 
+                            "Demaro Create",
+                            "Nuevo Usuario Registrado!" )
                             
-                            //console.log(this.auth.authenticated)
-   
-
+                  
+                            .pipe(first())
                             
-
-                            if(this.auth.authenticated){
-                                this.planServices.UserAuthPlan().subscribe(res =>{
-                                  console.log("plan user auth:", res)
-                                  this.planServices.plan_mensual = res;
-                                  this.planServices.sueldo = this.planServices.plan_mensual.sueldo;
-
-                                  console.log()
-                                  
-                                  this.planServices.ListGasto()
-                                  .pipe(first())
-                                  .subscribe(data => {
-                                    console.log("data api edit2 gastos stepper: ", data)
-                                    this.planServices.arrayinput = data;
-                            
-                                    let v = this.planServices.arrayinput.filter(gastos => gastos.if_default == true)
-                            
-                                    this.planServices.arrayinput = v;
-                            
-                                    for (let item of this.planServices.arrayinput) { 
-                                      this.planServices.AddGasto(item.name, item.value, 1).subscribe(objs => {
-                                        console.log("objs post: ", objs)
-                                        this.planServices.arrayinput = objs;
-                            
-                                        
-                                      })
-                                  }
-
-                                  this.loading = false;
-                                  this.router.navigate(['']);
-
-                                })
-                                },
+                            .subscribe(
+                              data => {
+                                this.loading = false;
+                                
+                                
+    
+                                this.auth.authenticated = true;
+                  
+                              },
                               error => {
-                                console.log("wut? ", error)
-                              })
-
-      
+                                console.log("error al enviar: ", error);
                               }
-
+                            )
                         }, 
                         error => {
                             console.log("error loggin: ", error)
